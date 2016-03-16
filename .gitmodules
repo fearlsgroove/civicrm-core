@@ -1,0 +1,7 @@
+[submodule "packages"]
+	path = packages
+	url = https://github.com/fearlsgroove/civicrm-packages.git
+	branch = 4.4
+[submodule "drupal"]
+	path = drupal
+	url = https://github.com/fearlsgroove/civicrm-drupal.git
