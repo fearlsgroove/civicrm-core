@@ -1,0 +1,6 @@
+[submodule "drupal"]
+	path = drupal
+	url = https://github.com/civicrm/civicrm-drupal.git
+[submodule "packages"]
+	path = packages
+	url = https://github.com/civicrm/civicrm-packages.git
