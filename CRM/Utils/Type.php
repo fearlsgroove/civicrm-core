@@ -300,6 +300,18 @@ class CRM_Utils_Type {
   }
 
   /**
+   * Helper function to call validate on arrays
+   *
+   * @see validate
+   */
+  public static function validateAll($data, $type, $abort = TRUE) {
+    foreach ($data as $key => $value) {
+      $data[$key] = CRM_Utils_Type::validate($value, $type, $abort);
+    }
+    return $data;
+  }
+
+  /**
    * Verify that a variable is of a given type.
    *
    * @param mixed $data
@@ -401,6 +413,12 @@ class CRM_Utils_Type {
 
       case 'MysqlOrderBy':
         if (CRM_Utils_Rule::mysqlOrderBy($data)) {
+          return $data;
+        }
+        break;
+
+      case 'ExtensionKey':
+        if (CRM_Utils_Rule::checkExtensionKeyIsValid($data)) {
           return $data;
         }
         break;

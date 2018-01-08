@@ -79,7 +79,7 @@ class CRM_Upgrade_Incremental_php_FourSix {
     //   $postUpgradeMessage .= '<br /><br />' . ts("WARNING: For increased security, profile submissions embedded in remote sites are no longer allowed to create or edit data by default. If you need to allow users to submit profiles from external sites, you can restore this at Administer > System Settings > Misc (Undelete, PDFs, Limits, Logging, Captcha, etc.) > 'Accept profile submissions from external sites'");
     // }
     if ($rev == '4.6.21') {
-      $postUpgradeMessage .= '<br /><br />' . ts("By default, CiviCRM now disables the ability to import directly fro SQL. To use this feature, you must explicitly grant permission 'import SQL datasource'.");
+      $postUpgradeMessage .= '<br /><br />' . ts("By default, CiviCRM now disables the ability to import directly from SQL. To use this feature, you must explicitly grant permission 'import SQL datasource'.");
     }
   }
 
@@ -283,6 +283,27 @@ class CRM_Upgrade_Incremental_php_FourSix {
   public function upgrade_4_6_21($rev) {
     $this->addTask(ts('Upgrade DB to %1: SQL', array(1 => $rev)), 'task_4_6_x_runSql', $rev);
     $this->addTask('Set Remote Submissions setting', 'setRemoteSubmissionsSetting', $rev);
+  }
+
+  /**
+   * Upgrade function.
+   *
+   * @param string $rev
+   */
+  public function upgrade_4_6_26($rev) {
+    $this->addTask(ts('Upgrade DB to %1: SQL', array(1 => $rev)), 'task_4_6_x_runSql', $rev);
+    $this->addTask('Add new CiviMail fields', 'addMailingTemplateType');
+  }
+
+  public static function addMailingTemplateType() {
+    if (!CRM_Core_DAO::checkFieldExists('civicrm_mailing', 'template_type', FALSE)) {
+      CRM_Core_DAO::executeQuery('
+        ALTER TABLE civicrm_mailing
+        ADD COLUMN `template_type` varchar(64)  NOT NULL DEFAULT \'traditional\' COMMENT \'The language/processing system used for email templates.\',
+        ADD COLUMN `template_options` longtext  COMMENT \'Advanced options used by the email templating system. (JSON encoded)\'
+      ');
+    }
+    return TRUE;
   }
 
   /**

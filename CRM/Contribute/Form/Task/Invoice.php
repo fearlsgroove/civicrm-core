@@ -25,6 +25,8 @@
  +--------------------------------------------------------------------+
  */
 
+use Dompdf\Dompdf;
+use Dompdf\Options;
 /**
  *
  * @package CRM
@@ -325,7 +327,7 @@ class CRM_Contribute_Form_Task_Invoice extends CRM_Contribute_Form_Task {
       //to obtain due date for PDF invoice
       $contributionReceiveDate = date('F j,Y', strtotime(date($input['receive_date'])));
       $invoiceDate = date("F j, Y");
-      $dueDate = date('F j ,Y', strtotime($contributionReceiveDate . "+" . $prefixValue['due_date'] . "" . $prefixValue['due_date_period']));
+      $dueDate = date('F j, Y', strtotime($contributionReceiveDate . "+" . $prefixValue['due_date'] . "" . $prefixValue['due_date_period']));
 
       if ($input['component'] == 'contribute') {
         $eid = $contribID;
@@ -648,8 +650,10 @@ class CRM_Contribute_Form_Task_Invoice extends CRM_Contribute_Form_Task {
    *   Name of file which is in pdf format
    */
   static public function putFile($html, $name = 'Invoice.pdf') {
-    require_once "vendor/dompdf/dompdf/dompdf_config.inc.php";
-    $doc = new DOMPDF();
+    $options  = new Options();
+    $options->set('isRemoteEnabled', TRUE);
+
+    $doc = new DOMPDF($options);
     $doc->load_html($html);
     $doc->render();
     $html = $doc->output();

@@ -1742,7 +1742,7 @@ class CRM_Report_Form extends CRM_Core_Form {
         if ($value !== NULL && count($value) > 0) {
           $value = CRM_Utils_Type::escapeAll($value, $type);
           $operator = $op == 'mnot' ? 'NOT' : '';
-          $regexp = "[[:cntrl:]]*" . implode('[[:>:]]*|[[:<:]]*', (array) $value) . "[[:cntrl:]]*";
+          $regexp = "([[:cntrl:]]|^)" . implode('([[:cntrl:]]|$)|([[:cntrl:]]|^)', (array) $value) . "([[:cntrl:]]|$)";
           $clause = "{$field['dbAlias']} {$operator} REGEXP '{$regexp}'";
         }
         break;
@@ -2056,6 +2056,16 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
           $retValue = $value;
           break;
         }
+        else {
+          $customField['options'] = CRM_Core_BAO_CustomOption::getCustomOption($customField['id']);
+          foreach ($customField['options'] as $cf_key => $cf_values) {
+            if ($cf_values['value'] == $value) {
+              $retValue = $cf_values['label'];
+            }
+          }
+          break;
+        }
+
       case 'StateProvince':
       case 'Country':
 

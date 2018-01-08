@@ -799,6 +799,7 @@ LIMIT 1;";
     }
 
     CRM_Core_Error::debug_log_message("Success: Database updated");
+
     if ($this->_isRecurring) {
       $this->sendRecurringStartOrEndNotification($ids, $recur);
     }

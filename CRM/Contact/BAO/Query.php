@@ -1823,6 +1823,8 @@ class CRM_Contact_BAO_Query {
       case 'activity_role':
       case 'activity_status_id':
       case 'activity_status':
+      case 'activity_priority':
+      case 'activity_priority_id':
       case 'followup_parent_id':
       case 'parent_id':
       case 'source_contact_id':
@@ -2627,6 +2629,7 @@ class CRM_Contact_BAO_Query {
         case 'parent_id':
         case 'civicrm_activity_contact':
         case 'source_contact':
+        case 'activity_priority':
           $from .= CRM_Activity_BAO_Query::from($name, $mode, $side);
           continue;
 
@@ -3500,6 +3503,7 @@ WHERE  $smartGroupClause
         $contactIds[] = substr($values[0], CRM_Core_Form::CB_PREFIX_LEN);
       }
     }
+    CRM_Utils_Type::validateAll($contactIds, 'Positive');
     if (!empty($contactIds)) {
       $this->_where[0][] = " ( contact_a.id IN (" . implode(',', $contactIds) . " ) ) ";
     }
@@ -5583,7 +5587,7 @@ AND   displayRelType.is_active = 1
       }
 
       if (is_object($dao) && property_exists($dao, $value['idCol'])) {
-        $val = $dao->$value['idCol'];
+        $val = $dao->{$value['idCol']};
 
         if (CRM_Utils_System::isNull($val)) {
           $dao->$key = NULL;
@@ -5594,10 +5598,10 @@ AND   displayRelType.is_active = 1
           $dao->$idColumn = $val;
 
           if ($key == 'state_province_name') {
-            $dao->$value['pseudoField'] = $dao->$key = CRM_Core_PseudoConstant::stateProvinceAbbreviation($val);
+            $dao->{$value['pseudoField']} = $dao->$key = CRM_Core_PseudoConstant::stateProvinceAbbreviation($val);
           }
           else {
-            $dao->$value['pseudoField'] = $dao->$key = CRM_Core_PseudoConstant::getLabel($baoName, $value['pseudoField'], $val);
+            $dao->{$value['pseudoField']} = $dao->$key = CRM_Core_PseudoConstant::getLabel($baoName, $value['pseudoField'], $val);
           }
         }
         elseif ($value['pseudoField'] == 'state_province_abbreviation') {
